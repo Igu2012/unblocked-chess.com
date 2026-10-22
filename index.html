@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>One moment please...</title>
+</head>
+<body>
+  <h1 id="message">one moment please...</h1>
+
+  <script>
+    const hosts = [
+      "https://chess.com",
+      "https://justdoinghomework.com",
+      "https://superhardalgebraproblems.com",
+      "https://schoolschoolschool.com",
+      "https://chezz.xyz",
+      "https://c4355.com"
+    ];
+    const assetPaths = ["/favicon.ico", "/favicon.png", "/apple-touch-icon.png"];
+    const assetTimeout = 6000;
+
+    function canLoadAsset(host, path) {
+      return new Promise((resolve) => {
+        const image = new Image();
+        let finished = false;
+        const timeout = setTimeout(() => finish(false), assetTimeout);
+
+        function finish(loaded) {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timeout);
+          image.onload = null;
+          image.onerror = null;
+          resolve(loaded);
+        }
+
+        image.onload = () => finish(true);
+        image.onerror = () => finish(false);
+        image.src = `${host}${path}?check=${Date.now()}`;
+      });
+    }
+
+    async function findHost() {
+      for (const host of hosts) {
+        for (const path of assetPaths) {
+          if (await canLoadAsset(host, path)) {
+            window.location.replace(host);
+            return;
+          }
+        }
+      }
+
+      document.getElementById("message").textContent = "no host found";
+    }
+
+    findHost();
+  </script>
+</body>
+</html>
